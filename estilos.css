@@ -1,0 +1,42 @@
+
+body{
+    background-image: url(sistema/img/fondo_login.jpg);
+    
+}
+/*login*/
+form{
+    width: 400px;
+   background: #e2e1df;
+    margin: auto;
+    margin-top: 300px;
+    text-align: center;
+    padding: 40px ;
+}
+
+.text,.password
+{
+    display: block;
+    padding: 14px 80px;
+    margin: 20px auto;
+    
+}
+.button{
+    padding: 10px 125px;
+    cursor: pointer;
+}
+.button:hover{
+    transition: 2s;
+    background: red ;
+    color: blue;
+    
+}
+/*label*/
+.label{
+   display: block;
+   padding: 10px 0 0;
+}
+.label a{
+    text-decoration: none;
+    color: seagreen;
+    font-size: 20px;
+}
