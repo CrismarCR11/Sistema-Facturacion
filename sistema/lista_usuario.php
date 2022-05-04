@@ -11,6 +11,8 @@ include("../conexion.php");
 <head>
 	<meta charset="UTF-8">
 	<?php include "includes/scrips.php" ?>
+    <link rel="stylesheet" type="text/css" href="css/tabla.css">
+
 	<title>Lista de Usuarios</title>
 </head>
 <body>
@@ -23,7 +25,7 @@ include("../conexion.php");
             <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th>Correo</th>
+                <th>Correo | creacion</th>
                 <th>Rol</th>
                 <th>Acciones</th>
             </tr>
@@ -41,11 +43,11 @@ include("../conexion.php");
                         <tr>
                             <td><?php echo $data["idusuario"]; ?></td>
                             <td><?php echo $data["nombre"]; ?></td>
-                            <td><?php echo $data["correo"]; ?></td>
+                            <td><?php echo $data["correo"]; ?> </td>
                             <td><?php echo $data["rol"]; ?></td>
                             <td>
-                                <a href="#" class="link_edit">Editar</a>
-                                <a href="#" class="link_delete">Eliminar</a>
+                                <a class="link_edit" href="edit_usuario.php?id=<?php echo $data["idusuario"]; ?>" >Editar</a>
+                                <a href="prueba.php" class="link_delete">Eliminar</a>
                             </td>
                         </tr>
                 <?php

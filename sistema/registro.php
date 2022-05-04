@@ -11,7 +11,9 @@
         }else{
             
             $nombre= $_POST['nombre'];
-            $email= $_POST['correo'];
+            date_default_timezone_set('America/Argentina/Buenos_Aires');    
+            $DateAndTime = date('m-d-Y h:i:s a', time());
+            $email= $_POST['correo']." | ".$DateAndTime;
             $user= $_POST['usuario'];
             $clave= $_POST['clave'];
             $rol= $_POST['rol'];

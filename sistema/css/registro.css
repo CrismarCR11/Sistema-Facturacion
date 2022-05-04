@@ -76,3 +76,6 @@ body{
     outline: none;
 }
 
+.noting option:first-child{
+    display: none;
+}
