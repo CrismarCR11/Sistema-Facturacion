@@ -5,41 +5,52 @@
         $alert='';
         //si son vacion mandara un mensaje si no pasara al else
         if(empty($_POST['nombre']) || empty($_POST['correo']) || empty($_POST['usuario'])
-        || empty($_POST['clave']) || empty($_POST['rol']))
+        || empty($_POST['rol']))
         {
             $alert='<p class="msg_error">Todos los campos son obligatorios</p>';
         }else{
-            
+            $idUsuario=$_POST['idUsuario'];
             $nombre= $_POST['nombre'];
             $email= $_POST['correo'];
             $user= $_POST['usuario'];
             $clave= $_POST['clave'];
             $rol= $_POST['rol'];
-
-            $query = mysqli_query($conexion,"SELECT * FROM usuario WHERE usuario = '$user' OR correo = '$email' ");
+            //devolver un resultado 
+            $query = mysqli_query($conexion,"SELECT * FROM usuario 
+                                            WHERE (usuario = '$user' AND idusuario != $idUsuario) 
+                                            OR (correo = '$email' AND idusuario != $idUsuario)");
             $result = mysqli_fetch_array($query);
 
             if($result>0){
                 $alert='<p class="msg_error">El correo o el usuario ya existen</p>';
             }else{
-                $query_insert = mysqli_query($conexion,"INSERT INTO usuario(nombre,correo,usuario,clave,rol) 
-                                                                    VALUES('$nombre','$email','$user','$clave','$rol')");
-                if($query_insert)
+                if(empty($_POST['clave'])){
+                    $sql_update = mysqli_query($conexion, "UPDATE usuario
+                                                            SET nombre='$nombre', correo='$email', usuario='$user', rol='$rol'
+                                                            WHERE idusuario=$idUsuario");
+                }else
                 {
-                    $alert='<p class="msg_error">Usuario creado correctamente</p>';
+                    $sql_update = mysqli_query($conexion, "UPDATE usuario
+                                                            SET nombre='$nombre', correo='$email', usuario='$user', clave='$clave', rol='$rol'
+                                                            WHERE idusuario=$idUsuario");
+                }
+                
+                if($sql_update)
+                {
+                    $alert='<p class="msg_error">Usuario actualizado correctamente</p>';
                 }else{
-                    $alert='<p class="msg_error">Error al crear el usuario</p>';
+                    $alert='<p class="msg_error">Error al actualizar el usuario</p>';
                 }
             }
         }
     }
-    // mostrar datos
+    // mostrar datos en el formulario
     if(empty($_GET['id']))
     {
         header('Location: lista_usuario.php');
     }
     $iduser = $_GET['id'];
-    
+    //agarrar los datos de la base de datos
     $sql= mysqli_query($conexion,"SELECT u.idusuario, u.nombre, u.correo, u.usuario, (u.rol) AS idrol, (r.rol) as rol 
     FROM usuario u 
     INNER JOIN rol r ON u.rol = r.idrol 
@@ -51,6 +62,7 @@
         header('Location: lista_usuario.php');
     }else{
         $option= '';
+        //recuperar datos dentro del data
         while ($data=mysqli_fetch_array($sql)){
             $iduser= $data['idusuario'];
             $nombre= $data['nombre'];
@@ -58,7 +70,7 @@
             $usuario= $data['usuario'];
             $idrol= $data['idrol'];
             $rol= $data['rol'];
-            
+            //mostrando los roles
             if($idrol == 1){
                 $option='<option value="'.$idrol.'" select>'.$rol.'</option>';
             }else if($idrol == 2){
@@ -87,6 +99,7 @@
         <form action="" class="Formu" method="post">
         <div class="alert"> <?php echo isset($alert)? $alert:''; ?> </div>
             <h1 class="titulo">Actualizar</h1>
+            <input type="hidden" name="idUsuario" value="<?php echo $iduser; ?>">
             <input class="texto" name="nombre" type="text" placeholder="Nombre" value="<?php echo $nombre;  ?>">
             <input class="texto" name="correo" type="email" placeholder="Correo Electronico" value="<?php echo $correo;  ?>">
             <input class="texto" name="usuario" type="text" placeholder="Usuario" value="<?php echo $usuario;  ?>">

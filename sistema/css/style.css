@@ -194,7 +194,7 @@ table tr:nth-child(odd){
 table tr td{
 	padding: 15px;
 	text-align: center;
-	background: red;
+	
 }
 .link_edit{
 	color: #0ca4ce;
