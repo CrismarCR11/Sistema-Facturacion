@@ -33,7 +33,7 @@ include("../conexion.php");
             
 
                 $query=mysqli_query($conexion,"SELECT u.idusuario, u.nombre, u.correo, u.usuario, r.rol FROM 
-                                        usuario u INNER JOIN rol r ON u.rol=r.idrol");
+                                        usuario u INNER JOIN rol r ON u.rol=r.idrol WHERE estatus=1;");
 
                 $result = mysqli_num_rows($query);
                 // si nos devuelve mayor a 0 significa que tenemos registros
@@ -47,7 +47,12 @@ include("../conexion.php");
                             <td><?php echo $data["rol"]; ?></td>
                             <td>
                                 <a class="link_edit" href="edit_usuario.php?id=<?php echo $data["idusuario"]; ?>" >Editar</a>
-                                <a href="prueba.php" class="link_delete">Eliminar</a>
+                                <?php
+                                    if($data['rol'] != "Administrador" ) {?>
+                                        <a href="eliminar_confirmar_usuario.php?id=<?php echo $data["idusuario"]; ?>" class="link_delete">Eliminar</a>
+                                   <?php }?>
+                                
+                                
                             </td>
                         </tr>
                 <?php
