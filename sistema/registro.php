@@ -13,7 +13,9 @@
             $nombre= $_POST['nombre'];
             date_default_timezone_set('America/Argentina/Buenos_Aires');    
             $DateAndTime = date('m-d-Y h:i:s a', time());
-            $email= $_POST['correo']." | ".$DateAndTime;
+            //por si queremos poner fecha es esto
+            //$email= $_POST['correo']." | ".$DateAndTime;
+            $email= $_POST['correo'];
             $user= $_POST['usuario'];
             $clave= $_POST['clave'];
             $rol= $_POST['rol'];

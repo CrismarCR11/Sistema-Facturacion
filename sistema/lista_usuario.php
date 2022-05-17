@@ -30,10 +30,26 @@ include("../conexion.php");
                 <th>Acciones</th>
             </tr>
             <?php 
-            
+                //paginador
+                $sql_registe=mysqli_query($conexion,"SELECT COUNT(*) AS total_registro FROM usuario WHERE estatus=1");
+                $result_register=mysqli_fetch_array($sql_registe);
+                $total_registro = $result_register['total_registro'];
+                $por_pagina=5;
+                if(empty($_GET['pagina'])){
+                    $pagina=1;
+                }else{
+                    $pagina=$_GET['pagina'];
+                }
+                $desde=($pagina-1)*$por_pagina;
+                $total_paginas=ceil($total_registro / $por_pagina);
+                echo $total_registro;
+                echo $total_paginas;
 
+                //traer de la base de datos los registros
                 $query=mysqli_query($conexion,"SELECT u.idusuario, u.nombre, u.correo, u.usuario, r.rol FROM 
-                                        usuario u INNER JOIN rol r ON u.rol=r.idrol WHERE estatus=1;");
+                                        usuario u INNER JOIN rol r ON u.rol=r.idrol WHERE estatus=1 
+                                        ORDER BY idusuario ASC
+                                        LIMIT $desde,$por_pagina");
 
                 $result = mysqli_num_rows($query);
                 // si nos devuelve mayor a 0 significa que tenemos registros
@@ -62,6 +78,39 @@ include("../conexion.php");
             
             
         </table>
+
+        <div class="paginador">
+            <ul>
+                <?php
+                    if($pagina != 1)
+                    {
+                
+                ?>
+                <li><a href="?pagina=<?php echo 1; ?>">|<<</a></li>
+                <li><a href="?pagina= <?php $pagina-1; ?>"><<<</a></li>
+                <?php
+                    }
+                    //contador para el paginador
+                    for($i=1; $i <= $total_paginas; $i++){
+                        if($i == $pagina)
+                        {
+                            echo '<li  class="pageSelected">'.$i.'</li>';
+                        }else{
+                            echo '<li><a href="?pagina='.$i.'">'.$i.'</a></li>';
+                        }
+                        
+                    }
+                    
+                    if($pagina != $total_paginas)
+                    {
+                ?>
+                
+                
+                <li><a href="?pagina= <?php $pagina+1; ?>">>>></a></li>
+                <li><a href="?pagina= <?php $total_paginas; ?>">>>|<</a></li>
+                <?php } ?>
+            </ul>
+        </div>
     
     </section>
 

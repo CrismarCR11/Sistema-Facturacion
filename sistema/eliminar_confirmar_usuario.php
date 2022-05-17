@@ -2,7 +2,10 @@
     include "../conexion.php";
 
     if(!empty($_POST)){
-        $idusuario=$_POST['idusuario'];
+        if($_POST['idusuario']==1){
+            header('location: lista_usuario.php');
+            exit;
+        }
         //consulta para eliminar el registro 
         //$query_delete=mysqli_query($conexion,"DELETE FROM usuario WHERE idusuario=$idusuario");
         $query_delete=mysqli_query($conexion, "UPDATE usuario SET estatus = 0 WHERE idusuario=$idusuario");
