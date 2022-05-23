@@ -1,11 +1,19 @@
 <?php
+    //esto es para que solo el que tenga el rol de admi pueda configurar
+    session_start();
+    if($_SESSION['rol']!=1)
+    {
+        header("location: ./");
+    }
     include "../conexion.php";
 
     if(!empty($_POST)){
         if($_POST['idusuario']==1){
             header('location: lista_usuario.php');
+            //mysqli_close($conexion);
             exit;
         }
+        $idusuario = $_POST['idusuario'];
         //consulta para eliminar el registro 
         //$query_delete=mysqli_query($conexion,"DELETE FROM usuario WHERE idusuario=$idusuario");
         $query_delete=mysqli_query($conexion, "UPDATE usuario SET estatus = 0 WHERE idusuario=$idusuario");
@@ -21,6 +29,7 @@
     if(empty($_REQUEST['id']) || $_REQUEST['id'] == 1)
     {
         header('location: lista_usuario.php');
+        //mysqli_close($conexion);
     }else{
         
         $idusuario = $_REQUEST['id'];
@@ -33,6 +42,7 @@
                                         ON u.rol=r.idrol
                                         WHERE u.idusuario=$idusuario");
         //nos envia datos en filas
+        //mysqli_close($conexion);
         $result=mysqli_num_rows($query);
         if($result > 0){
             while($data=mysqli_fetch_array($query)){

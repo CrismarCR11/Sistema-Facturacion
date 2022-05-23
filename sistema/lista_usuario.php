@@ -1,5 +1,10 @@
 <?php 
-
+//esto es para que solo el que tenga el rol de admi pueda configurar
+session_start();
+if($_SESSION['rol']!=1)
+{
+    header("location: ./");
+}
 include("../conexion.php");
 
 ?>
@@ -21,6 +26,12 @@ include("../conexion.php");
 	<section id="container">
 		<h1>Lista de Usuarios</h1>
         <a href="registro.php" class="btn_new">Crear Usuario</a>
+
+        <form action="buscar_usuario.php" method="get" class="form_search" >
+            <input type="text" name="busqueda" class="text_buscar" id="busqueda" placeholder="Buscar">
+            <input type="submit" value="Buscar" class="btn_search">
+        </form>
+
         <table>
             <tr>
                 <th>ID</th>
@@ -50,7 +61,7 @@ include("../conexion.php");
                                         usuario u INNER JOIN rol r ON u.rol=r.idrol WHERE estatus=1 
                                         ORDER BY idusuario ASC
                                         LIMIT $desde,$por_pagina");
-
+                //mysqli_close($conexion);
                 $result = mysqli_num_rows($query);
                 // si nos devuelve mayor a 0 significa que tenemos registros
                 if($result>0){

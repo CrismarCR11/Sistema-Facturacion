@@ -1,4 +1,11 @@
 <?php
+    //esto es para que solo el que tenga el rol de admi pueda configurar
+    session_start();
+    if($_SESSION['rol']!=1)
+    {
+        header("location: ./");
+    }
+
     include "../conexion.php";
     if(!empty($_POST))
     {
@@ -21,6 +28,7 @@
             $rol= $_POST['rol'];
 
             $query = mysqli_query($conexion,"SELECT * FROM usuario WHERE usuario = '$user' OR correo = '$email' ");
+            //mysqli_close($conexion);
             $result = mysqli_fetch_array($query);
 
             if($result>0){
