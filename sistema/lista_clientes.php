@@ -1,10 +1,7 @@
 <?php 
 //esto es para que solo el que tenga el rol de admi pueda configurar
 session_start();
-if($_SESSION['rol']!=1)
-{
-    header("location: ./");
-}
+
 include("../conexion.php");
 
 ?>
