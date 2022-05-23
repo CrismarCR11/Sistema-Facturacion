@@ -31,6 +31,7 @@ if(!empty($_SESSION['active']))
             echo $pass;
             /* query= seleccionar toda la fila donde el usuario sea igual a user y clace igual a pass */
             $query= mysqli_query($conexion,"SELECT * FROM usuario WHERE usuario='$user' AND clave='$pass' ");
+            //mysqli_close($conexion);
             $result=mysqli_num_rows($query);
 
             if($result>0)

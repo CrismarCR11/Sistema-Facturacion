@@ -1,4 +1,10 @@
 <?php
+    //esto es para que solo el que tenga el rol de admi pueda configurar
+    session_start();
+    if($_SESSION['rol']!=1)
+    {
+        header("location: ./");
+    }
     include "../conexion.php";
     if(!empty($_POST))
     {
@@ -9,7 +15,7 @@
         {
             $alert='<p class="msg_error">Todos los campos son obligatorios</p>';
         }else{
-            $idUsuario=$_POST['idUsuario'];
+            $idUsuario=$_POST['id'];
             $nombre= $_POST['nombre'];
             $email= $_POST['correo'];
             $user= $_POST['usuario'];
@@ -20,6 +26,7 @@
                                             WHERE (usuario = '$user' AND idusuario != $idUsuario) 
                                             OR (correo = '$email' AND idusuario != $idUsuario)");
             $result = mysqli_fetch_array($query);
+            echo  $result;
 
             if($result>0){
                 $alert='<p class="msg_error">El correo o el usuario ya existen</p>';
@@ -43,19 +50,21 @@
                 }
             }
         }
+        
     }
     // mostrar datos en el formulario
-    if(empty($_GET['id']))
+    if(empty($_REQUEST['id']))
     {
         header('Location: lista_usuario.php');
+        //mysqli_close($conexion);
     }
-    $iduser = $_GET['id'];
+    $iduser = $_REQUEST['id'];
     //agarrar los datos de la base de datos
     $sql= mysqli_query($conexion,"SELECT u.idusuario, u.nombre, u.correo, u.usuario, (u.rol) AS idrol, (r.rol) as rol 
     FROM usuario u 
     INNER JOIN rol r ON u.rol = r.idrol 
     WHERE idusuario=$iduser");
-
+    //mysqli_close($conexion);
     $result_sql = mysqli_num_rows($sql);
     if($result_sql==0)
     {
@@ -99,13 +108,14 @@
         <form action="" class="Formu" method="post">
         <div class="alert"> <?php echo isset($alert)? $alert:''; ?> </div>
             <h1 class="titulo">Actualizar</h1>
-            <input type="hidden" name="idUsuario" value="<?php echo $iduser; ?>">
+            <input type="hidden" name="id" value="<?php echo $iduser; ?>">
             <input class="texto" name="nombre" type="text" placeholder="Nombre" value="<?php echo $nombre;  ?>">
             <input class="texto" name="correo" type="email" placeholder="Correo Electronico" value="<?php echo $correo;  ?>">
             <input class="texto" name="usuario" type="text" placeholder="Usuario" value="<?php echo $usuario;  ?>">
             <input class="texto" name="clave" type="password" placeholder="Password">
             <?php 
                 $query_rol = mysqli_query($conexion,"SELECT * FROM rol");
+                //mysqli_close($conexion);
                 $result_rol = mysqli_num_rows($query_rol);
             ?>
             

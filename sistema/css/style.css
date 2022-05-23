@@ -259,3 +259,29 @@ table tr td{
 	background: #428bca;
 	border:  1px solid #428bca;
 }
+/*========= BUSCAR USUARIO ============*/
+
+.form_search{
+	display: flex;
+	float: right;
+	background: initial;
+	padding: 10px;
+	
+}
+.form_search .btn_search{
+	background: #1faac8;
+	color: #fff;
+	padding: 10px 20px 10px 20px;
+	border: 0;
+	cursor: pointer;
+	margin-left: 10px;
+	border-radius: 10px;
+}
+.form_search .text_buscar{
+	border-radius: 10px;
+	border: 1px solid black;
+	outline: none;
+}
+.text_buscar .input:focus{
+	outline:0px;
+}
