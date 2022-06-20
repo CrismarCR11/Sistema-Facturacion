@@ -21,11 +21,19 @@ include("../conexion.php");
 	
 	<?php include "includes/header.php" ?>
 	<section id="container">
+        <?php
+            //request= recibe datos ya sea get o post
+            $busqueda = strtolower($_REQUEST['busqueda']);
+            if(empty($busqueda)){
+                header("location: lista_clientes.php");
+                //mysqli_close($conexion);
+            }
+        ?>
 		<h1>Lista de Clientes</h1>
-        <a href="registro_cliente.php" class="btn_new">Crear Cliente</a>
+        <a href="registro_cliente.php" class="btn_new">Crear Clientes</a>
 
         <form action="buscar_cliente.php" method="get" class="form_search" >
-            <input type="text" name="busqueda" class="text_buscar" id="busqueda" placeholder="Buscar">
+            <input type="text" name="busqueda" class="text_buscar" id="busqueda" placeholder="Buscar" value="<?php echo $busqueda ?>">
             <input type="submit" value="Buscar" class="btn_search">
         </form>
 
@@ -36,12 +44,24 @@ include("../conexion.php");
                 <th>Nombre</th>
                 <th>Telefono</th>
                 <th>Direccion</th>
-                <th>Creador</th>
                 <th>Acciones</th>
             </tr>
             <?php 
                 //paginador
-                $sql_registe=mysqli_query($conexion,"SELECT COUNT(*) AS total_registro FROM cliente WHERE estatus=1");
+                
+                $sql_registe=mysqli_query($conexion,"SELECT COUNT(*) AS total_registro 
+                                                    FROM cliente 
+                                                    WHERE 
+                                                    (
+                                                        idcliente LIKE '%$busqueda%' OR
+                                                        nit LIKE '%$busqueda%' OR
+                                                        nombre LIKE '%$busqueda%' OR
+                                                        telefono LIKE '%$busqueda%' OR
+                                                        direccion LIKE '%$busqueda%'
+                                                        
+                                                    )
+                                                    AND
+                                                    estatus=1");
                 $result_register=mysqli_fetch_array($sql_registe);
                 $total_registro = $result_register['total_registro'];
                 $por_pagina=5;
@@ -56,31 +76,33 @@ include("../conexion.php");
                 echo $total_paginas;
 
                 //traer de la base de datos los registros
-                $query=mysqli_query($conexion,"SELECT c.idcliente, c.nit, c.nombre as cliente, c.telefono, c.direccion, u.nombre as usuario FROM 
-                                        cliente c INNER JOIN usuario u ON c.usuario_id=u.idusuario WHERE c.estatus=1 
+                $query=mysqli_query($conexion,"SELECT * FROM cliente
+                                        WHERE 
+                                        (
+                                                        idcliente LIKE '%$busqueda%' OR
+                                                        nit LIKE '%$busqueda%' OR
+                                                        nombre LIKE '%$busqueda%' OR
+                                                        telefono LIKE '%$busqueda%' OR
+                                                        direccion LIKE '%$busqueda%'
+                                                        
+                                                    )
+                                        AND
+                                        estatus=1 
                                         ORDER BY idcliente ASC
                                         LIMIT $desde,$por_pagina");
+
                 //mysqli_close($conexion);
                 $result = mysqli_num_rows($query);
-                //$ree=mysqli_fetch_array($query);
-                //print_r ($ree);
                 // si nos devuelve mayor a 0 significa que tenemos registros
                 if($result>0){
-                    while($data = mysqli_fetch_array($query)){
-                            if($data["nit"]==0)
-                            {
-                                $nit = 'C/F';
-                            }else{
-                                $nit =$data["nit"];
-                            }
-                    ?>
+                    while($data = mysqli_fetch_array($query)){?>
+
                         <tr>
                             <td><?php echo $data["idcliente"]; ?></td>
-                            <td><?php echo $nit ?></td>
-                            <td><?php echo $data["cliente"]; ?></td>
-                            <td><?php echo $data["telefono"]; ?> </td>
+                            <td><?php echo $data["nit"]; ?> </td>
+                            <td><?php echo $data["nombre"]; ?></td>
+                            <td><?php echo $data["telefono"]; ?></td>
                             <td><?php echo $data["direccion"]; ?></td>
-                            <td><?php echo $data["usuario"]; ?></td>
                             <td>
                                 <a class="link_edit" href="edit_cliente.php?id=<?php echo $data["idcliente"]; ?>" >Editar</a>
                                 <?php
@@ -88,20 +110,23 @@ include("../conexion.php");
                                     if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2){?>
                                         <a href="eliminar_confirmar_cliente.php?id=<?php echo $data["idcliente"]; ?>" class="link_delete">Eliminar</a>
                                     <?php } ?>
-                                        
-                                   
                                 
                                 
                             </td>
                         </tr>
                 <?php
                     }
-                    
                 }?>
                 
             
             
         </table>
+                
+        <?php
+            //verificar si no se encuentra un usuario en la busqueda no hacer nada
+            if($total_registro!=0)
+            {
+        ?>
 
         <div class="paginador">
             <ul>
@@ -110,8 +135,8 @@ include("../conexion.php");
                     {
                 
                 ?>
-                <li><a href="?pagina=<?php echo 1; ?>">|<<</a></li>
-                <li><a href="?pagina= <?php $pagina-1; ?>"><<<</a></li>
+                <li><a href="?pagina=<?php echo 1; ?>&busqueda=<?php echo $busqueda; ?>">|<<</a></li>
+                <li><a href="?pagina= <?php $pagina-1; ?>&busqueda=<?php echo $busqueda; ?>"><<<</a></li>
                 <?php
                     }
                     //contador para el paginador
@@ -120,7 +145,7 @@ include("../conexion.php");
                         {
                             echo '<li  class="pageSelected">'.$i.'</li>';
                         }else{
-                            echo '<li><a href="?pagina='.$i.'">'.$i.'</a></li>';
+                            echo '<li><a href="?pagina='.$i.'&busqueda='.$busqueda.'">'.$i.'</a></li>';
                         }
                         
                     }
@@ -130,12 +155,14 @@ include("../conexion.php");
                 ?>
                 
                 
-                <li><a href="?pagina= <?php $pagina+1; ?>">>>></a></li>
-                <li><a href="?pagina= <?php $total_paginas; ?>">>>|<</a></li>
+                <li><a href="?pagina= <?php $pagina+1; ?>&busqueda=<?php echo $busqueda; ?>">>>></a></li>
+                <li><a href="?pagina= <?php $total_paginas; ?>&busqueda=<?php echo $busqueda; ?>">>>|<</a></li>
                 <?php } ?>
             </ul>
         </div>
-    
+        <?php } ?>
+
+
     </section>
 
 	<?php include "includes/footer.php" ?>
