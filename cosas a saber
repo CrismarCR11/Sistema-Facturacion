@@ -1,1 +1,12 @@
 los .. 2 puntos significa volver al principio de la carpeta inicial
+
+
+TRIGER CREACION SIRVE PARA HACER UNION DE 2 COSAS DE UN EVENTO REALIZADO
+
+DELIMITER //
+	CREATE TRIGGER entradas_A_I AFTER INSERT on producto FOR EACH ROW
+    BEGIN
+    	INSERT INTO entradas(codproducto, cantidad, precio, usuario_id)
+        VALUES(new.condproducto, new.existencia, new.precio, new.usuario_id);
+        END; //
+DELIMITER ;
